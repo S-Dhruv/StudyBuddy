@@ -2,7 +2,6 @@ import { PromptTemplate } from "@langchain/core/prompts";
 import { ChatMistralAI } from "@langchain/mistralai";
 import * as dotenv from "dotenv";
 
-dotenv.config();
 
 const model = new ChatMistralAI({
   model: "mistral-large-latest",
@@ -12,7 +11,7 @@ const model = new ChatMistralAI({
 
 const quizgen = new PromptTemplate({
   template: `
-    You have to generate 2 types of quiz: Personality based and knowledge based quizes to determine if the user is a slow,medium or a fast learner.
+    You have to generate knowledge based quizes to determine if the user is a slow,medium or a fast learner.
     Give the correct and wrong options.Personalize the questions on the following factors:
     1. Subjects = {subjects}
     2. Age ={age}
@@ -21,14 +20,14 @@ const quizgen = new PromptTemplate({
     1. If the user is younger than 14 do not generate a personality quiz
     2. Ensure that the quiz is appropriate for the age and subjects
   `,
-  inputVariables: ["subjects","age"],
+  inputVariables: ["subjects", "age"],
 });
 
-export async function generateQuiz(subjects,age) {
+export async function generateQuiz(subjects, age) {
   try {
     const formattedPrompt = await quizgen.format({
-     subjects,
-     age
+      subjects,
+      age
     });
 
     const jsonPrompt = `${formattedPrompt}
@@ -36,7 +35,7 @@ export async function generateQuiz(subjects,age) {
     Make sure it is a JSON format and it is easy to parse and display.
    `
     const response = await model.invoke(jsonPrompt);
-    return response 
+    return response
   } catch (error) {
     console.error("Error generating study plan:", error);
   }
