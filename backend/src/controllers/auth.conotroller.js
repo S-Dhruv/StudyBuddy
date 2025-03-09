@@ -97,3 +97,39 @@ export const check = async (req, res) => {
         console.log("Error in finding AUTH USER!");
     }
 }
+export const updateProfile = async function(req,res){
+    try {
+        const {email,name,age,grade,subjects}=req.body;
+        const user=await User.find(email);
+        if(!user){
+            res.status(404).json({
+                message:"User not found!"
+            })
+        }
+        if(user.email!=email){
+            message:"Email cannot be Changed";
+        }
+        if(name){  
+            user.name=name;
+        }
+        if(age){
+            user.age=age;
+        }
+        if(grade){
+            user.grade=grade;
+        }
+        if(subjects){
+            user.subjects=subjects;
+        }
+        await user.save();
+        res.status(200).json({
+            message:"Profile Updated!"
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            message:"Internal Server Error!"
+        })
+    } 
+                 
+}

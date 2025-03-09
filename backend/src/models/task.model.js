@@ -1,27 +1,37 @@
-import mongoose, { mongo } from "mongoose";
-const taskSchema = new mongoose.Schema({
-    userId: {
+import mongoose from "mongoose";
+const taskSchema=new mongoose.Schema({
+    task:{
+        type:String,
+        required:true,
+    },
+    Deadline:{
+        type:Date,
+        required:true,
+    },
+    estimatedTime:{
+        type:String,
+        required:true,
+    },
+    difficulty:{
+        type:String,
+        required:true,
+    },
+    isAiPlanned:{
+        type:Boolean,
+        required:true,
+    }
+})
+const maintaskSchema = new mongoose.Schema({
+    userId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true
+        required:true,
     },
-    task_type: {
-        type: String,
-        required: true,
-    },
-    deadline: {
+    date:{
         type: Date,
-        required: true,
+        required:true,
     },
-    status: {
-        type: String,
-        enum: ["Pending", "In Progress", "Completed"],
-        default: "Pending"
-    },
-    completed: {
-        type: Boolean,
-        default: false
-    }
-}, { timestamps: true })
-const Task = mongoose.model("Task", taskSchema);
+    tasks:[taskSchema]
+})
+const Task = mongoose.model("Task", maintaskSchema);
 export default Task
