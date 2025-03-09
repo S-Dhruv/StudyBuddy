@@ -1,17 +1,21 @@
 import express from "express";
 import dotenv from "dotenv"
+dotenv.config()
 import authRoutes from "../backend/src/routes/auth.routes.js"
 import taskRoutes from "../backend/src/routes/task.routes.js"
 import {generateStudyPlan} from "./ai-planner.js"
 import cookieParser from "cookie-parser";
+
 import { connectDB } from "./src/lib/db.js"; 
 import { generateQuiz } from "./ai-quiz.js";
 const app = express();
-dotenv.config()
+
 const PORT = process.env.PORT
 app.use(express.json())
 app.use("/api/auth", authRoutes)
-app.use(express.urlencoded({ extended: true }));app.use(express.json())
+app.use("/api/task", taskRoutes);
+
+app.use(express.urlencoded({ extended: true }));
 
 app.post("/ai", async (req, res) => {
   try {
@@ -25,7 +29,8 @@ app.post("/ai", async (req, res) => {
       topic
     );
     res.status(200).json(response);
-  } catch {
+  } 
+  catch {
     res.status(400).json({ message: "Internal Error" });
   }
 });
@@ -35,7 +40,8 @@ app.post("/quiz", async (req, res) => {
     const { subjects, age } = req.body;
     const response = await generateQuiz(subjects, age);
     res.status(200).json(response);
-  } catch (err) {
+  } 
+  catch (err) {
     res.json(err);
   }
 });
