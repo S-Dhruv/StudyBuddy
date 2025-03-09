@@ -12,30 +12,37 @@ const model = new ChatMistralAI({
 
 const roleplay = new PromptTemplate({
   template: `
-     You are a study planner which takes into account the following factors and makes a study plan by allocating time throughout the days until the deadline:
-     The factors to consider include:
+    You are a personalized study planner. Consider the following factors:
      * Difficulty = {difficulty}
      * Deadline = {deadline}
-     * Learner type = {type}
-     * Estimated time taken = {est}
-
+     * Learner Type = {type}
+     * Estimated Time = {est}
+     * Preferred Study Hours = {studyHours}
+     * Topic = {topic}
      Guidelines:
-     1. If the difficulty is high, assign more time to complete the task and vice versa.
-     2. If the deadline is close and the difficulty is high, allocate more time accordingly.
-     3. If the learner is slow, assign more time and vice versa.
-     4. If the estimated time is high (more than 24 hours), adjust based on learner type, deadline, and difficulty.
-     Give the output in a json file label the keys as the sub topics you chose to display
+     1. If difficulty is high, assign more time and break it into smaller tasks.
+     2. If the deadline is close and difficulty is high, prioritize this task.
+     3. Adjust based on learner type: 
+        - Slow learners get extended study time, limit them to the topic basics knowledge and increase the estimated time by 30% for the basics
+        - Medium learners get the best of both slow and fast learner but dont overburden or overwhelm them
+        - Fast learners get a compressed schedule, make them explore to more advance topics and decrease the estimated time by 30% for the basics
+     4. If the estimated time is high (24+ hours), balance it across available days.
+     5. Generate the plan on a date based plan from the date of creation(today) to the last 2nd day of the deadline 
+     6. Give the description day to day based on the topics make it generalized
+     Provide the study plan in JSON format and in such a way that it follows the following schema. Remove 
   `,
-  inputVariables: ["difficulty", "deadline", "est", "type"],
+  inputVariables: ["difficulty", "deadline", "est", "type","studyHours","topic"],
 });
 
-export async function generateStudyPlan(difficulty, deadline, est, type) {
+export async function generateStudyPlan(difficulty, deadline, est, type,studyHours,topic) {
   try {
     const formattedPrompt = await roleplay.format({
       difficulty,
       deadline,
       est,
       type,
+      studyHours,
+      topic
     });
 
     const jsonPrompt = `${formattedPrompt}
@@ -44,14 +51,17 @@ export async function generateStudyPlan(difficulty, deadline, est, type) {
     Example:
     {
       "Introduction": "Overview of the topic",
+      "Calculation":"Show the calculation but just the base answer don't show the type of the user"
       "Day 1": "Cover basics...",
       "Day 2": "Practice questions...",
-      "Final Review": "Revise key points..."
+      "Final Review": "Revise key points...",
+      "Tips": "Helpful tips to ease the process",
+      
     }
-    Ensure the response is valid JSON with no extra text. Add addition json entries if necessary include all the details`;
+    Ensure the response is valid JSON. Add addition json entries if necessary include all the details`;
 
     const response = await model.invoke(jsonPrompt);
-    return response 
+    return response
   } catch (error) {
     console.error("Error generating study plan:", error);
   }
