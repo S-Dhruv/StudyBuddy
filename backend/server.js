@@ -17,14 +17,10 @@ app.use("/api/task", taskRoutes);
 
 app.use(express.urlencoded({ extended: true }));
 
-
-
 app.use(cors());
 app.use(cookieParser());
 app.post("/ai", protectRoute, async (req, res) => {
   try {
-    // const user = req.user();
-    // console.log(user);
     const { difficulty, deadline, type, studyHours, topic } = req.body;
     const response = await generateStudyPlan(
       difficulty,
@@ -36,7 +32,7 @@ app.post("/ai", protectRoute, async (req, res) => {
     const val = response.content;
     const matches = val.match(/```json\n([\s\S]*?)\n```/);
     console.log(matches[1]);
-    res.status(200).json(matches[1])
+    res.status(200).json(matches[1]);
   } catch {
     res.status(400).json({ message: "Internal Error" });
   }

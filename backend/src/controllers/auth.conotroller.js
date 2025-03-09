@@ -133,3 +133,32 @@ export const updateProfile = async function(req,res){
     } 
                  
 }
+export const DecideScore = async function(req, res) {
+    try {
+        const { total, correct, mail } = req.body;
+
+        const user = await User.findOne({ email: mail }); 
+        if (!user) {
+            return res.status(404).json({ message: "User not found!" });
+        }
+
+        const score = (correct / total) * 100;
+
+        if (score <= 33) {
+            user.student_type = "Slow";
+        } else if (score > 33 && score <= 66) {
+            user.student_type = "Medium";
+        } else {
+            user.student_type = "Fast";
+        }
+        console.log(user.student_type)
+        // Save the updated user
+        await user.save();
+
+        return res.status(200).json({ message: "Student type updated successfully!" });
+    } 
+    catch (err) {
+        console.error("Error:", err);
+        return res.status(500).json({ message: "Internal Server Error!" });
+    }
+};
