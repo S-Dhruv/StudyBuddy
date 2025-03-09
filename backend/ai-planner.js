@@ -61,7 +61,7 @@ export async function generateStudyPlan(difficulty, deadline, est, type,studyHou
     Ensure the response is valid JSON. Add addition json entries if necessary include all the details`;
 
     const response = await model.invoke(jsonPrompt);
-    return response 
+    return response
   } catch (error) {
     console.error("Error generating study plan:", error);
   }

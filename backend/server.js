@@ -1,16 +1,16 @@
 import express from "express";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import authRoutes from "../backend/src/routes/auth.routes.js";
-import { connectDB } from "./src/lib/db.js";
-import { generateStudyPlan } from "./ai-planner.js";
+import { connectDB } from "./src/lib/db.js"; 
+import {  generateStudyPlan  } from "./ai-planner.js";
 import { generateQuiz } from "./ai-quiz.js";
 const app = express();
-dotenv.config();
-const PORT = process.env.PORT;
-app.use(express.json());
-app.use("/api/auth", authRoutes);
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+dotenv.config()
+const PORT = process.env.PORT
+app.use(express.json())
+app.use("/api/auth", authRoutes)
+app.use(express.urlencoded({ extended: true }));app.use(express.json())
 
 app.post("/ai", async (req, res) => {
   try {
