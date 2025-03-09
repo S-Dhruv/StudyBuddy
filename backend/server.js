@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv"
 import authRoutes from "../backend/src/routes/auth.routes.js"
+import taskRoutes from "../backend/src/routes/task.routes.js"
 import { connectDB } from "./src/lib/db.js";import {generateStudyPlan} from "./ai-planner.js"
 const app = express();
 dotenv.config()
@@ -8,7 +9,7 @@ const PORT = process.env.PORT
 app.use(express.json())
 app.use("/api/auth", authRoutes)
 app.use(express.urlencoded({ extended: true }));app.use(express.json())
-
+app.use("/task", taskRoutes);
 app.post("/ai",async (req,res)=>{
     const {difficulty,deadline,est,type} = req.body
 
@@ -16,6 +17,7 @@ app.post("/ai",async (req,res)=>{
 
     res.status(200).json(response);
 })
+
 
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
