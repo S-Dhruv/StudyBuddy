@@ -18,6 +18,7 @@ const roleplay = new PromptTemplate({
     * Learner Type: {learner_type}
     * Preferred Study Hours: {study_hours}
     * Topic: {topic}
+    * Task Type: {task_type}
 
     Generate a structured study plan from **{start_date}** to **{end_date}**.
     Follow this JSON format:
@@ -34,16 +35,17 @@ const roleplay = new PromptTemplate({
         "Deadline": "{deadline}",
         "Learner Type": "{learner_type}",
         "Preferred Study Hours": "{study_hours}",
-        "Topic": "{topic}"
+        "Topic": "{topic}",
+        "Task Type": "{task_type}"
       }}
     }}
     \`\`\`
     Ensure strict JSON formatting.
   `,
-  inputVariables: ["difficulty", "deadline", "learner_type", "study_hours", "topic", "start_date", "end_date"],
+  inputVariables: ["difficulty", "deadline", "learner_type", "study_hours", "topic", "start_date", "end_date", "task_type"],
 });
 
-export async function generateStudyPlan(difficulty, deadline, learner_type, study_hours, topic) {
+export async function generateStudyPlan(difficulty, deadline, learner_type, study_hours, topic, task_type) {
   try {
     const today = new Date().toISOString().split("T")[0];
     const deadlineDate = new Date(deadline);
@@ -57,7 +59,8 @@ export async function generateStudyPlan(difficulty, deadline, learner_type, stud
       study_hours,
       topic,
       start_date: today,
-      end_date: endStr
+      end_date: endStr,
+      task_type
     });
     const response = await model.invoke(formattedPrompt);
     return response;

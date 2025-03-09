@@ -1,3 +1,4 @@
+import Task from "./src/models/task.model.js";
 import express from "express";
 import dotenv from "dotenv"
 import authRoutes from "../backend/src/routes/auth.routes.js"
@@ -12,7 +13,6 @@ const app = express();
 dotenv.config();
 app.use(cors());
 app.use(cookieParser());
-
 const PORT = process.env.PORT;
 app.use(express.json());
 app.use("/api/auth", authRoutes);
@@ -23,18 +23,45 @@ app.post("/ai", protectRoute, async (req, res) => {
   try {
     // const user = req.user();
     // console.log(user);
-    const { difficulty, deadline, type, studyHours, topic } = req.body;
+    const { difficulty, deadline, type, studyHours, topic, userID, task_type } = req.body;
     const response = await generateStudyPlan(
       difficulty,
       deadline,
       type,
       studyHours,
-      topic
+      topic,
+      task_type,
     );
     const val = response.content;
-    const matches = val.match(/```json\n([\s\S]*?)\n```/);
-    console.log(matches[1]);
-    res.status(200).json(matches[1])
+    const matches = val.match(/```json\n([\s\S]*?)\n```/)[1];
+    const parsedData = JSON.parse(matches);
+    const dateTasks = Object.entries(parsedData)
+      .filter(([key]) => /^\d{4}-\d{2}-\d{2}$/.test(key))
+      .map(([date, task]) => ({
+        date,
+        task,
+        task_type,
+        difficulty: "medium",
+        isAiPlanned: true,
+        Deadline: deadline,
+        estimatedTime: "2 hours"
+      }));
+    console.log('before db ', dateTasks);
+    for (const { date, task, difficulty, isAiPlanned, Deadline, estimatedTime } of dateTasks) {
+      const existingTask = await Task.findOne({ userId: userID, date: new Date(date) });
+      if (existingTask) {
+        existingTask.tasks.push({ task, difficulty, isAiPlanned, Deadline, estimatedTime });
+        await existingTask.save();
+      } else {
+        const newTask = new Task({
+          userId: userID,
+          date: new Date(date),
+          tasks: [{ task, difficulty, isAiPlanned, Deadline, estimatedTime }]
+        });
+        await newTask.save();
+      }
+    }
+    res.status(200).json(matches)
   } catch {
     res.status(400).json({ message: "Internal Error" });
   }
@@ -49,8 +76,19 @@ app.post("/api/init-quiz", protectRoute, async (req, res) => {
     console.log(error);
   }
 });
-
-
+app.get("/api/get-tasks", async (req, res) => {
+  const { userId } = req.body;
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: "Invalid Credentials" });
+    }
+    const tasks = await Task.find({ userId })
+    if (!tasks) console.log("EMPTY TASKS!");
+    res.status(200).json({ tasks })
+  } catch {
+    res.status(400).json({ message: "Internal Error" });
+  }
+})
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
   connectDB();
