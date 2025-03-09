@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv"
+dotenv.config()
 import authRoutes from "../backend/src/routes/auth.routes.js"
 import taskRoutes from "../backend/src/routes/task.routes.js"
 import cookieParser from "cookie-parser";
@@ -8,15 +9,17 @@ import { generateStudyPlan } from "./ai-planner.js";
 import { generateQuiz } from "./ai-quiz.js";
 import cors from "cors";
 const app = express();
-dotenv.config();
+const PORT = process.env.PORT
+app.use(express.json())
+app.use("/api/auth", authRoutes)
+app.use("/api/task", taskRoutes);
+
+app.use(express.urlencoded({ extended: true }));
+
 app.use(cors());
 app.use(cookieParser());
 
 const PORT = process.env.PORT;
-app.use(express.json());
-app.use("/api/auth", authRoutes);
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 app.post("/ai", async (req, res) => {
   try {
@@ -30,7 +33,8 @@ app.post("/ai", async (req, res) => {
       topic
     );
     res.status(200).json(response);
-  } catch {
+  } 
+  catch {
     res.status(400).json({ message: "Internal Error" });
   }
 });
@@ -39,13 +43,14 @@ app.post("/api/init-quiz", async (req, res) => {
     const { subjects, age } = req.body;
     const response = (await generateQuiz(subjects, age))
     res.status(200).json(response);
+
+  } 
+  catch (err) {
+    res.json(err);
     console.log(response);
-  } catch (error) {
-    console.log(error);
-  }
+  } 
+  
 });
-
-
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
   connectDB();
