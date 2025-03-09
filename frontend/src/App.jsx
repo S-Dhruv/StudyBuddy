@@ -37,21 +37,21 @@
 
 
 import { Routes , Route } from "react-router-dom"
-import NavBar from "./components/NavBar"
-import <Signup></Signup> from "./pages/SignupPage"
-import HomePage from "./pages/HomePage"
-import LoginPage from "./pages/LoginPage"
-import ProfilePage from "./pages/ProfilePage"
-import SettingsPage from "./pages/SettingsPage"
-import { useAuthStore } from "./store/useAuthStore"
+// import NavBar from "./components/NavBar"
+import Signup from "./auth/Signup"
+import Home from './ui/Home'
+import Login from "./auth/Login"
+// import ProfilePage from "./pages/ProfilePage"
+// import SettingsPage from "./pages/SettingsPage"
+import {useAuthStore} from '../src/store/userAuth.js'
 import { useEffect } from "react"
 import {Loader} from "lucide-react"
 import { Navigate } from "react-router-dom"
 import { Toaster } from "react-hot-toast";
-import {useThemeStore} from "../src/store/useThemeStore"
+
 function App() {
   const {authUser , checkAuth , isCheckingAuth ,onlineUsers } = useAuthStore()
-  const {theme} = useThemeStore()
+  
   console.log("Online Users: " ,onlineUsers);
   useEffect(()=>{
     checkAuth()
@@ -68,11 +68,11 @@ function App() {
         <div data-theme={theme}>
           <NavBar />
           <Routes>
-            <Route path="/" element= { authUser ?<HomePage /> : <Navigate to="/login" />  } />
-            <Route path="/signup" element= { !authUser ? <SignupPage /> : <Navigate to="/"  />  } />
-            <Route path="/login" element= { !authUser ? <LoginPage /> :  <Navigate to="/" />  } />
-            <Route path="/settings" element= {<SettingsPage />} />
-            <Route path="/profile" element= { authUser ? <ProfilePage /> : <Navigate to="/login"/> }/> 
+            <Route path="/" element= { authUser ?<Home /> : <Navigate to="/signup" />  } />
+            <Route path="/signup" element= { !authUser ? <Signup /> : <Navigate to="/"  />  } />
+            <Route path="/login" element= { !authUser ? <Login /> :  <Navigate to="/" />  } />
+            {/* <Route path="/settings" element= {<SettingsPage />} />
+            <Route path="/profile" element= { authUser ? <ProfilePage /> : <Navigate to="/login"/> }/>  */}
           </Routes>
           <Toaster/>
         </div>

@@ -1,11 +1,13 @@
-import Signup from '../auth/Signup'
+import Navbar from '../shared/Navbar'
 import React from 'react'
 
 
 
 const Home = () => {
   return (
-    <Signup/>
+    <Navbar/>
+  
+    
   )
 }
 
