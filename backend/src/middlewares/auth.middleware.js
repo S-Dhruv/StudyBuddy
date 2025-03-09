@@ -19,8 +19,6 @@ export const protectRoute = async (req, res, next) => {
         }
         const user = await User.findById(decoded.userID).select("-passWord")
         console.log("User :", user);
-
-
         if (!user) {
             return res.status(404).json({
                 message: "No User!"
@@ -30,7 +28,7 @@ export const protectRoute = async (req, res, next) => {
         next();
     } catch (error) {
         res.status(500).json({
-            message: "Internal Error!"
+            message: "Middleware Internal Error!"
         })
     }
 }
