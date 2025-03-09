@@ -12,7 +12,10 @@ import cors from "cors";
 import { protectRoute } from "./src/middlewares/auth.middleware.js";
 const app = express();
 dotenv.config();
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}))
 app.use(cookieParser());
 const PORT = process.env.PORT;
 app.use(express.json());
@@ -21,7 +24,6 @@ app.use("/api/task", taskRoutes);
 
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
 app.use(cookieParser());
 app.post("/ai", protectRoute, async (req, res) => {
   try {
@@ -50,7 +52,7 @@ app.post("/ai", protectRoute, async (req, res) => {
       }));
     console.log('before db ', dateTasks);
     for (const { date, task, difficulty, isAiPlanned, Deadline, estimatedTime } of dateTasks) {
-      const existingTask = await Task.findOne({ userId: userID, date: new Date(date) });
+      const existingTask = await Task.find({ userId: userID, date: new Date(date) });
       if (existingTask) {
         existingTask.tasks.push({ task, difficulty, isAiPlanned, Deadline, estimatedTime });
         await existingTask.save();

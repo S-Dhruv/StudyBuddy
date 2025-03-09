@@ -38,7 +38,7 @@ export const signup = async (req, res) => {
     const { email, name, password, age, grade, subjects } = req.body
     try {
         if (!email || !name || !password || password.length < 6 || !age || subjects.length == 0) {
-            res.status(400).json({
+            return res.status(400).json({
                 "message": "Invalid Credentials!"
             })
         }
@@ -48,21 +48,16 @@ export const signup = async (req, res) => {
             name, email,
             password: hashPassword, age, grade, subjects,
         })
-        if (newUser) {
-            const token = generateToken(newUser._id, res)
-            await newUser.save()
-            res.status(201).json({
-                _id: newUser._id,
-                name: newUser.name,
-                email: newUser.email,
-                profilePic: newUser.profilePic,
-                token,
-            })
-        } else {
-            res.status(400).json({
-                message: "Invalid User Data"
-            })
-        }
+        const token = generateToken(newUser._id, res)
+        await newUser.save()
+        return res.status(201).json({
+            _id: newUser._id,
+            name: newUser.name,
+            email: newUser.email,
+            profilePic: newUser.profilePic,
+            token,
+            age, grade, subjects
+        })
     } catch (error) {
         console.log('Signup Error :', error);
         res.status(500).json({
@@ -97,47 +92,47 @@ export const check = async (req, res) => {
         console.log("Error in finding AUTH USER!");
     }
 }
-export const updateProfile = async function(req,res){
+export const updateProfile = async function (req, res) {
     try {
-        const {email,name,age,grade,subjects}=req.body;
-        const user=await User.find(email);
-        if(!user){
+        const { email, name, age, grade, subjects } = req.body;
+        const user = await User.find(email);
+        if (!user) {
             res.status(404).json({
-                message:"User not found!"
+                message: "User not found!"
             })
         }
-        if(user.email!=email){
-            message:"Email cannot be Changed";
+        if (user.email != email) {
+            message: "Email cannot be Changed";
         }
-        if(name){  
-            user.name=name;
+        if (name) {
+            user.name = name;
         }
-        if(age){
-            user.age=age;
+        if (age) {
+            user.age = age;
         }
-        if(grade){
-            user.grade=grade;
+        if (grade) {
+            user.grade = grade;
         }
-        if(subjects){
-            user.subjects=subjects;
+        if (subjects) {
+            user.subjects = subjects;
         }
         await user.save();
         res.status(200).json({
-            message:"Profile Updated!"
+            message: "Profile Updated!"
         })
     }
-    catch(error){
+    catch (error) {
         res.status(500).json({
-            message:"Internal Server Error!"
+            message: "Internal Server Error!"
         })
-    } 
-                 
+    }
+
 }
-export const DecideScore = async function(req, res) {
+export const DecideScore = async function (req, res) {
     try {
         const { total, correct, mail } = req.body;
 
-        const user = await User.findOne({ email: mail }); 
+        const user = await User.findOne({ email: mail });
         if (!user) {
             return res.status(404).json({ message: "User not found!" });
         }
@@ -156,7 +151,7 @@ export const DecideScore = async function(req, res) {
         await user.save();
 
         return res.status(200).json({ message: "Student type updated successfully!" });
-    } 
+    }
     catch (err) {
         console.error("Error:", err);
         return res.status(500).json({ message: "Internal Server Error!" });
