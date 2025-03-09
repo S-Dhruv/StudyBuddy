@@ -11,7 +11,7 @@ const model = new ChatMistralAI({
 
 const quizgen = new PromptTemplate({
   template: `
-    You have to generate 2 types of quiz: Personality based and knowledge based quizes to determine if the user is a slow,medium or a fast learner.
+    You have to generate knowledge based quizes to determine if the user is a slow,medium or a fast learner.
     Give the correct and wrong options.Personalize the questions on the following factors:
     1. Subjects = {subjects}
     2. Age ={age}

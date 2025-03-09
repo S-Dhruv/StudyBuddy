@@ -1,8 +1,9 @@
 import Task from "./src/models/task.model.js";
 import express from "express";
-import dotenv from "dotenv"
-import authRoutes from "../backend/src/routes/auth.routes.js"
-import taskRoutes from "../backend/src/routes/task.routes.js"
+import dotenv from "dotenv";
+dotenv.config();
+import authRoutes from "../backend/src/routes/auth.routes.js";
+import taskRoutes from "../backend/src/routes/task.routes.js";
 import cookieParser from "cookie-parser";
 import { connectDB } from "./src/lib/db.js";
 import { generateStudyPlan } from "./ai-planner.js";
@@ -16,13 +17,14 @@ app.use(cookieParser());
 const PORT = process.env.PORT;
 app.use(express.json());
 app.use("/api/auth", authRoutes);
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use("/api/task", taskRoutes);
 
+app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
+app.use(cookieParser());
 app.post("/ai", protectRoute, async (req, res) => {
   try {
-    // const user = req.user();
-    // console.log(user);
     const { difficulty, deadline, type, studyHours, topic, userID, task_type } = req.body;
     const response = await generateStudyPlan(
       difficulty,
@@ -61,7 +63,7 @@ app.post("/ai", protectRoute, async (req, res) => {
         await newTask.save();
       }
     }
-    res.status(200).json(matches)
+    res.status(200).json(matches);
   } catch {
     res.status(400).json({ message: "Internal Error" });
   }
@@ -69,26 +71,16 @@ app.post("/ai", protectRoute, async (req, res) => {
 app.post("/api/init-quiz", protectRoute, async (req, res) => {
   try {
     const { subjects, age } = req.body;
-    const response = (await generateQuiz(subjects, age))
-    res.status(200).json(response);
-    console.log(response);
+    const response = await generateQuiz(subjects, age);
+    const val = response.content;
+    const matches = [...val.matchAll(/```json\n([\s\S]*?)\n```/g)];
+    res.json(matches);
   } catch (error) {
     console.log(error);
   }
 });
-app.get("/api/get-tasks", async (req, res) => {
-  const { userId } = req.body;
-  try {
-    if (!userId) {
-      return res.status(400).json({ message: "Invalid Credentials" });
-    }
-    const tasks = await Task.find({ userId })
-    if (!tasks) console.log("EMPTY TASKS!");
-    res.status(200).json({ tasks })
-  } catch {
-    res.status(400).json({ message: "Internal Error" });
-  }
-})
+
+
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
   connectDB();
