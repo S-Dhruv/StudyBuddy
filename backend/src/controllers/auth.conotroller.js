@@ -1,23 +1,38 @@
+import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs"
 
-
 export const login = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body
     try {
-        if (!email || !password) {
-            res.status(400).json({
-                "message": "Invalid Credentials!"
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({
+                message: "Invalid Credentials!"
             })
         }
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).json({
+                message: "Invalid Credentials!"
+            })
+        }
+        const token = generateToken(user._id, res);
+        console.log(token);
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            mail: user.email,
+            age: user.age,
+            token
+        })
     } catch (error) {
-        console.log('Signup Error :', error);
-        res.status(500).json({
-            message: "Internal Server Error!"
+        console.log();
+        console.log('Login Error :', error);
+        return res.status(500).json({
+            message: "Internal Error!"
         })
     }
-    console.log("LOGIN");
-    res.status(200).json("LOGIN!")
 }
 export const signup = async (req, res) => {
     const { email, name, password, age, grade, subjects } = req.body
@@ -57,12 +72,29 @@ export const signup = async (req, res) => {
 }
 export const logout = async (req, res) => {
     try {
-
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "strict",
+        });
+        res.status(200).json({
+            message: "Logout Successful!"
+        });
     } catch (error) {
-        console.log('Signup Error :', error);
-        res.status(500).json({
-            message: "Internal Server Error!"
+        console.log("Logout Error:", error);
+        return res.status(500).json({
+            message: "Internal Error!"
+        });
+    }
+}
+
+export const check = async (req, res) => {
+    try {
+        res.status(200).json({
+            user: req.user
         })
+    } catch (error) {
+        console.log("Error in finding AUTH USER!");
     }
 }
 export const updateProfile = async function(req,res){
