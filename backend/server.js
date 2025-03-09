@@ -1,5 +1,10 @@
 import express from "express";
+import dotenv from "dotenv"
+import authRoutes from "../backend/src/routes/auth.routes.js"
+import taskRoutes from "../backend/src/routes/task.routes.js"
+import {generateStudyPlan} from "./ai-planner.js"
 import cookieParser from "cookie-parser";
+import { connectDB } from "./src/lib/db.js"; 
 import dotenv from "dotenv";
 import authRoutes from "../backend/src/routes/auth.routes.js";
 import { connectDB } from "./src/lib/db.js";
@@ -41,6 +46,7 @@ app.post("/quiz", async (req, res) => {
     res.json(err);
   }
 });
+
 
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
