@@ -1,57 +1,64 @@
 import Task from "../models/task.model.js";
-// import User from "../models/user.model.js";
 
-export const createAiTask = async function (uid,aiTask){
-   // const {ObjectId} = require('mongodb');
-    try{
-        const lastDate=new Date(aiTask.Deadline);
-        let taskPresent = await Task.findOne({userId:uid,date:lastDate});
-        if(!taskPresent){
+export const createAiTask = async function (_id, aiTask, res) {
+    try {
+        const lastDate = aiTask.deadline;
+        let taskPresent = await Task.findOne({ userId: _id, date: lastDate });
+
+        if (!taskPresent) {
             taskPresent = new Task({
-                userId:uid,
-                date:lastDate,
-                tasks:[]
-            });   
-        } 
+                userId: _id, 
+                date: lastDate,
+                tasks: []
+            });
+        }
+
         taskPresent.tasks.push({
-            task:aiTask.task,
-            deadline:lastDate,
-            estimatedTime:aiTask.estimatedTime,
-            difficulty:aiTask.difficulty,
-            isAiPlanned:true
+            task: aiTask.task,
+            deadline: lastDate,
+            estimatedTime: aiTask.estimatedTime,
+            difficulty: aiTask.difficulty,
+            isAiPlanned: true
         });
+
         await taskPresent.save();
-        return {msg:"Task added successfully"};
+        console.log("Task Added Successfully");
+        return res.status(200).json({ msg: "Task added successfully" }); 
+    } catch (err) {
+        console.error("Error in adding task:", err);
+        return res.status(400).json({ msg: "Error in adding task", error: err.message }); 
     }
-    catch(err){
-        return {msg:"Error in adding task"};
-    }
-    
-}
+};
 
 
-export const createUserTask = async function (uid,userTask){
-    try{
-        const lastDate=new Date(userTask.Deadline);
-        let taskPresent = await Task.findOne({userId:uid,date:lastDate});
-        if(!taskPresent){
+export const createUserTask = async function (_id, UserTask, res) {
+    try {
+        const lastDate = UserTask.deadline;
+        let taskPresent = await Task.findOne({ userId: _id, date: lastDate });
+
+        if (!taskPresent) {
             taskPresent = new Task({
-                userId:uid,
-                date:lastDate,
-                tasks:[]
-            });   
-        } 
+                userId: _id, 
+                date: lastDate,
+                tasks: []
+            });
+        }
+
         taskPresent.tasks.push({
-            task:userTask.task,
-            deadline:userTask.Deadline,
-            estimatedTime:userTask.estimatedTime,
-            difficulty:userTask.difficulty,
-            isAiPlanned:false
+            task: UserTask.task,
+            deadline: lastDate,
+            estimatedTime: UserTask.estimatedTime,
+            difficulty: UserTask.difficulty,
+            isAiPlanned: false
         });
+
         await taskPresent.save();
-        return {msg:"Task added successfully"};
+        console.log("UserTask Added Successfully");
+        return res.status(200).json({ msg: "Task added successfully" }); 
+    } catch (err) {
+        console.error("Error in adding task:", err);
+        return res.status(400).json({ msg: "Error in adding task", error: err.message }); 
     }
-    catch(err){
-        return {msg:"Error in adding task"};
-    }
-}
+};
+
+
