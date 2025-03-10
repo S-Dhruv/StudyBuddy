@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { Plus } from "lucide-react";
-
+import axios from "axios";
+import { axiosInstance } from "@/Axios/axios";
+import { useAuthStore } from "@/store/userAuthStore";
 export default function AddTask({ onAddTask }) {
+  const { authUser } = useAuthStore();  
   const [formData, setFormData] = useState({
     title: "",
     topic: "",
@@ -9,6 +12,9 @@ export default function AddTask({ onAddTask }) {
     task_type: "Assignment",
     studyHours: 1,
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -18,27 +24,41 @@ export default function AddTask({ onAddTask }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newTask = {
-      ...formData,
-      id: `task-${Date.now()}`, // Corrected string interpolation
-      status: false,
-      createdAt: new Date().toISOString(),
-    };
+    setLoading(true);
+    setError(null);
 
-    if (onAddTask) {
-      onAddTask(newTask);
+    try {
+      const response = await axiosInstance.post("/ai", {
+        difficulty: "medium",
+        deadline: formData.deadline,
+        type: "study",
+        studyHours: formData.studyHours,
+        topic: formData.topic,
+        userId: authUser.user._id, // Replace with actual user ID
+        task_type: formData.task_type,
+      });
+
+      console.log("AI Response:", response.data);
+
+      if (onAddTask) {
+        onAddTask(response.data);
+      }
+
+      // Reset form
+      setFormData({
+        title: "",
+        topic: "",
+        deadline: "",
+        task_type: "Assignment",
+        studyHours: 1,
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
     }
-
-    // Reset form
-    setFormData({
-      title: "",
-      topic: "",
-      deadline: "",
-      task_type: "Assignment",
-      studyHours: 1,
-    });
   };
 
   return (
@@ -48,6 +68,8 @@ export default function AddTask({ onAddTask }) {
           <Plus className="h-5 w-5 text-blue-500 mr-2" />
           <h2 className="text-lg font-semibold text-gray-700">Add New Task</h2>
         </div>
+
+        {error && <p className="text-red-500">{error}</p>}
 
         <form onSubmit={handleSubmit}>
           {/* Task Title */}
@@ -135,8 +157,9 @@ export default function AddTask({ onAddTask }) {
           <button
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md transition-colors"
+            disabled={loading}
           >
-            Add Task
+            {loading ? "Adding Task..." : "Add Task"}
           </button>
         </form>
       </div>

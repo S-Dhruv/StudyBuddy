@@ -20,15 +20,16 @@ const QuizApp = () => {
 
     try {
       const response = await axios.post("http://localhost:6969/api/init-quiz", {
-        subjects: ["Math", "English"],
-        age: "19",
+        subjects: formData.subjects,
+        age: formData.age,
       });
 
-      let rawJsonString = response.data[0][0]; // raw backend json
+      let rawJsonString = response.data[0][0];
       const cleanedString = rawJsonString
         .replace(/```json|```/g, " ")
         .replace(/\\n/g, " ")
         .replace(/\\/g, "");
+      console.log(cleanedString); // raw backend json
 
       const parsedData = JSON.parse(cleanedString); // cleaned json
       console.log(parsedData);
