@@ -52,13 +52,13 @@ const QuizApp = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-5 border rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-5">Knowledge Quiz</h1>
+    <div className="max-w-lg p-5 mx-auto mt-10 border rounded-lg shadow-lg">
+      <h1 className="mb-5 text-2xl font-bold">Knowledge Quiz</h1>
 
       {/* Fetch Button */}
       <button
         onClick={fetchQuiz}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg mb-4"
+        className="px-4 py-2 mb-4 text-white bg-blue-500 rounded-lg"
         disabled={loading}
       >
         {loading ? "Loading..." : "Start Quiz"}

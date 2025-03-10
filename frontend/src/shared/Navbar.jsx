@@ -4,12 +4,12 @@ import { Avatar, AvatarImage } from '@radix-ui/react-avatar'
 import { Button } from '../components/ui/button';
 import { LogOut, User2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '@/store/userAuthStore';
 
-// import { PopoverContent, PopoverTrigger} from '@radix-ui/react-popover'
-// import {Button } from '@radix-ui/react-button'
 
 const Navbar = () => {
-    const user=false;
+    const {authUser, logout} = useAuthStore()
+    console.log(authUser);
   return (
     <div className='bg-white'>
         <div className='flex items-center justify-between h-16 mx-auto max-w-7xl '>
@@ -22,62 +22,46 @@ const Navbar = () => {
                     <li>Aboutus</li>
                     <li>Contactus</li>
                 </ul> 
-                {
-                    !user?
-                    (
                         <div className="flex items-center gap-2"> 
-                            <Link to="/login">
-                               <Button variant="outline">Login</Button>
-                            </Link>
-                            <Link to="/signup">
-                               <Button className="bg-[#6A38c2] hover:bg-[#5b30a6]">SignUp</Button>
-                            </Link>
+                        {
+                            authUser && <>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Avatar className="cursor-pointer">
+                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" className="w-12 h-12 ml-5 rounded-full"/>
+                                            
+                                        </Avatar>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-80">
+                                        <div className="flex gap-4 space-y-0.9">
+                                            <Avatar className="cursor-pointer">
+                                                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" className="w-12 h-12 ml-5 rounded-full"/>
+                                                
+                                            </Avatar>
+                                            <div>
+                                            <h4 className='font-medium'>{authUser.user.name || "Karan" }</h4>
+                                            </div>
+                                        
+                                        </div>
+                                        <div className="flex flex-col text-gray-600">
+                                            <div className="flex items-center gap-2 w-fit curser-pointer">
+                                                <User2/>
+                                                <Button variant="link">View Profile</Button>
+                                            </div>
+                                            <div className="flex items-center gap-2 w-fit curser-pointer">
+                                                <LogOut/>
+                                                <Button variant="link" onClick={logout}>Logout</Button>
+                                                </div>
+                                        
+                                        </div>
+                                        
+                                    </PopoverContent>
+                                </Popover>
+                            </>
+
+                        }
 
                         </div>
-                    ):
-                    (
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Avatar className="cursor-pointer">
-                                    <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" className="w-12 h-12 ml-5 rounded-full"/>
-                                    
-                                </Avatar>
-        
-                                
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80">
-                                <div className="flex gap-4 space-y-0.9">
-                                    <Avatar className="cursor-pointer">
-                                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" className="w-12 h-12 ml-5 rounded-full"/>
-                                        
-                                    </Avatar>
-                                    <div>
-                                    <h4 className='font-medium'>Karan sai</h4>
-                                    <p className="text-sm text-muted-foreground">Lorem ipsum dolor sit amet.</p>
-                                    </div>
-                                
-                                </div>
-                                <div className="flex flex-col text-gray-600">
-                                    <div className="flex items-center gap-2 w-fit curser-pointer">
-                                        <User2/>
-                                        <Button variant="link">View Profile</Button>
-                                    </div>
-                                    <div className="flex items-center gap-2 w-fit curser-pointer">
-                                        <LogOut/>
-                                        <Button variant="link">Logout</Button>
-                                    </div>
-                                
-                                </div>
-                                
-                            </PopoverContent>
-                        </Popover>
-
-
-                    )
-                }
-                
-               
-
             </div>  
            
         </div>
