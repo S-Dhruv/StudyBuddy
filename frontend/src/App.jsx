@@ -38,7 +38,7 @@
 
 import { Routes , Route } from "react-router-dom"
 import NavBar from "./components/NavBar"
-import <Signup></Signup> from "./pages/SignupPage"
+import SignupPage  from "./pages/SignupPage"
 import HomePage from "./pages/HomePage"
 import LoginPage from "./pages/LoginPage"
 import ProfilePage from "./pages/ProfilePage"
