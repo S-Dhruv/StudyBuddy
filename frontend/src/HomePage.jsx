@@ -2,8 +2,6 @@ import { useState } from "react";
 import React from "react";
 import DisplayCards from "@/components/DisplayCards";
 import AddTask from "@/components/AddTask";
-import axios from "axios";
-import { axiosInstance } from "@/Axios/axios";
 export default function HomePage() {
   const [tasks, setTasks] = useState([
     {
@@ -30,7 +28,6 @@ export default function HomePage() {
 
   const handleAddTask = (newTask) => {
     setTasks([...tasks, newTask]);
-    const response = axiosInstance.post("/ai", newTask)
   };
   const handleStatusChange = (updatedTask) => {
     setTasks(

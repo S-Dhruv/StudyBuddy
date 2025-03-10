@@ -7,7 +7,6 @@ import SignUp from "../src/pages/SignUp.jsx";
 import HomePage from "../src/pages/HomePage.jsx";
 import Login from "../src/pages/Login.jsx";
 import NavBar from "../src/shared/Navbar.jsx";
-import QuizApp from "../src/QuizApp.jsx";
 function App() {
   const { authUser, checkAuth } = useAuthStore();
   useEffect(() => {
@@ -33,10 +32,6 @@ function App() {
         <Route
           path="/login"
           element={!authUser ? <Login /> : <Navigate to="/" />}
-        />
-        <Route
-          path="/quiz"
-          element={!authUser ? <QuizApp /> : <Navigate to="/login" />}
         />
       </Routes>
       <Toaster />
