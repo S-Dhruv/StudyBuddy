@@ -1,6 +1,6 @@
 import Task from "./src/models/task.model.js";
 import express from "express";
-import dotenv from "dotenv";
+import dotenv, { parse } from "dotenv";
 dotenv.config();
 import authRoutes from "../backend/src/routes/auth.routes.js";
 import taskRoutes from "../backend/src/routes/task.routes.js";
@@ -27,9 +27,12 @@ app.use("/api/task", taskRoutes);
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
-app.post("/ai", protectRoute, async (req, res) => {
+
+app.post("/api/ai", async (req, res) => {
   try {
-    const { difficulty, deadline, type, studyHours, topic, userID, task_type } =
+    // const user = req.user();
+    // console.log(user);
+    const { difficulty, deadline, type, studyHours, topic, userId, task_type } =
       req.body;
     const response = await generateStudyPlan(
       difficulty,
@@ -62,8 +65,8 @@ app.post("/ai", protectRoute, async (req, res) => {
       Deadline,
       estimatedTime,
     } of dateTasks) {
-      const existingTask = await Task.find({
-        userId: userID,
+      const existingTask = await Task.findOne({
+        userId: userId,
         date: new Date(date),
       });
       if (existingTask) {
@@ -77,16 +80,20 @@ app.post("/ai", protectRoute, async (req, res) => {
         await existingTask.save();
       } else {
         const newTask = new Task({
-          userId: userID,
+          userId: userId,
           date: new Date(date),
           tasks: [{ task, difficulty, isAiPlanned, Deadline, estimatedTime }],
         });
         await newTask.save();
       }
+      console.log("exist", existingTask);
     }
     res.status(200).json(matches);
-  } catch {
-    res.status(400).json({ message: "Internal Error" });
+  } catch (error) {
+    console.error("Error in /api/ai:", error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
   }
 });
 app.post("/api/init-quiz", async (req, res) => {
@@ -100,7 +107,20 @@ app.post("/api/init-quiz", async (req, res) => {
     console.log(error);
   }
 });
-
+app.post("/api/get-tasks", async (req, res) => {
+  const { userId } = req.body;
+  console.log(userId);
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: "Invalid Credentials" });
+    }
+    const tasks = await Task.find({ userId });
+    if (!tasks) console.log("EMPTY TASKS!");
+    res.status(200).json({ tasks });
+  } catch {
+    res.status(400).json({ message: "Internal Error" });
+  }
+});
 app.listen(PORT, () => {
   console.log("Server is working at 6969");
   connectDB();
