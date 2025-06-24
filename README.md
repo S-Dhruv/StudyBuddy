@@ -11,42 +11,36 @@ Real-time schedule adjustments
 Simple, intuitive interface to keep you on track
 
 🧠 Workflow
-User Input Collection
+1. User Input Collection
 The user provides the following details for each task:
+- Task Name
+- Estimated Time to Complete
+- Difficulty Level (Easy, Medium, Hard)
+- Deadline (Date/Time)
 
-Task Name
-
-Estimated Time to Complete
-
-Difficulty Level (Easy, Medium, Hard)
-
-Deadline (Date/Time)
-
-Task Prioritization Logic
+2. Task Prioritization Logic
 Using LangChain and the Mistral API, StudBud analyzes all tasks and:
 
-Scores them based on a combination of urgency (how close the deadline is) and difficulty.
+- Scores them based on a combination of urgency (how close the deadline is) and difficulty.
+- Balances challenging and easy tasks to avoid burnout.
 
-Balances challenging and easy tasks to avoid burnout.
+3.Schedule Generation
 
-Schedule Generation
-Based on available hours and user preferences, StudBud:
+- Based on available hours and user preferences, StudBud:
+- Creates a daily/weekly study schedule.
+- Ensures even distribution of workload, respecting time constraints and priorities.
 
-Creates a daily/weekly study schedule.
+4. Dynamic Updates
 
-Ensures even distribution of workload, respecting time constraints and priorities.
+- If a task is missed or completed early, StudBud intelligently reshuffles the remaining tasks.
+ 
+- Keeps the plan updated in real-time without losing focus on deadlines.
 
-Dynamic Updates
+5. User-Friendly Output
 
-If a task is missed or completed early, StudBud intelligently reshuffles the remaining tasks.
+- Displays the plan in a clean, structured format.
 
-Keeps the plan updated in real-time without losing focus on deadlines.
-
-User-Friendly Output
-
-Displays the plan in a clean, structured format.
-
-Allows users to track and adjust their schedule easily.
+- Allows users to track and adjust their schedule easily.
 
 ## Setup
 
