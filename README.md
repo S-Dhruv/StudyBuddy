@@ -24,7 +24,7 @@ Using LangChain and the Mistral API, StudBud analyzes all tasks and:
 - Scores them based on a combination of urgency (how close the deadline is) and difficulty.
 - Balances challenging and easy tasks to avoid burnout.
 
-3.Schedule Generation
+3. Schedule Generation
 
 - Based on available hours and user preferences, StudBud:
 - Creates a daily/weekly study schedule.
