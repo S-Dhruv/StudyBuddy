@@ -1,4 +1,52 @@
-StudyBuddy - AI Study planner leverages Langchain, an AI framework, to use Mistral AI models.
+📚 StudBud – Your AI-Powered Study Planner
+StudBud is an intelligent study planning tool built with LangChain and powered by the Mistral API. It helps students and learners create personalized study schedules based on task difficulty, estimated time, and deadlines. StudBud dynamically prioritizes tasks using smart AI logic and adapts in real-time based on your progress — whether you miss a task or finish early.
+
+✨ Key Features:
+Generate custom study plans with AI
+
+Prioritize tasks based on urgency and difficulty
+
+Real-time schedule adjustments
+
+Simple, intuitive interface to keep you on track
+
+🧠 Workflow
+User Input Collection
+The user provides the following details for each task:
+
+Task Name
+
+Estimated Time to Complete
+
+Difficulty Level (Easy, Medium, Hard)
+
+Deadline (Date/Time)
+
+Task Prioritization Logic
+Using LangChain and the Mistral API, StudBud analyzes all tasks and:
+
+Scores them based on a combination of urgency (how close the deadline is) and difficulty.
+
+Balances challenging and easy tasks to avoid burnout.
+
+Schedule Generation
+Based on available hours and user preferences, StudBud:
+
+Creates a daily/weekly study schedule.
+
+Ensures even distribution of workload, respecting time constraints and priorities.
+
+Dynamic Updates
+
+If a task is missed or completed early, StudBud intelligently reshuffles the remaining tasks.
+
+Keeps the plan updated in real-time without losing focus on deadlines.
+
+User-Friendly Output
+
+Displays the plan in a clean, structured format.
+
+Allows users to track and adjust their schedule easily.
 
 ## Setup
 
